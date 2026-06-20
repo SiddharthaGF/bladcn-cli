@@ -1,0 +1,4 @@
+{
+  "dependencies": ["icon"],
+  "composer": ["mallardduck/blade-lucide-icons"]
+}

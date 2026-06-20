@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bladcn.dev/schema.json",
+  "title": "Bladcn",
+  "type": "object",
+  "required": ["componentsPath", "registry", "resolved"],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "componentsPath": {
+      "type": "string",
+      "description": "Relative path where Blade components are copied (<x-ui.*>)."
+    },
+    "registry": {
+      "type": "string",
+      "description": "Local path, github:owner/repo, or https://github.com/owner/repo"
+    },
+    "registryBranch": {
+      "type": "string",
+      "default": "main"
+    },
+    "resolved": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Components installed by the CLI"
+    }
+  },
+  "additionalProperties": false
+}
