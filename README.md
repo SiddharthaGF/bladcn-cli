@@ -135,85 +135,126 @@ You can also set a relative path in `registry`:
 }
 ```
 
-## How dependencies are resolved
+## How components are resolved
 
-Each component folder may include `dependencies.json`:
+Resolution is **declarative**: the CLI reads each component's `dependencies.json` in the registry and persists installed components in `resolved` inside `bladcn.json`. It does not infer dependencies from Blade imports.
+
+### Registry lookup
+
+`Registry` locates components under `resources/views/components/ui/` (preferred) or `components/` inside the configured registry. A component is either a **folder** (`accordion/`) or a single **file** (`foo.blade.php`).
+
+### `dependencies.json` manifest
+
+Only folder components may include a manifest. `ComponentManifest` parses:
 
 ```json
 {
   "dependencies": ["icon"],
   "composer": ["mallardduck/blade-lucide-icons"],
-  "npm": []
+  "npm": ["embla-carousel"],
+  "css": ["sonner.css"],
+  "js": ["bladcn/carousel.js"]
 }
+```
+
+| Field          | Purpose                                                                      |
+| -------------- | ---------------------------------------------------------------------------- |
+| `dependencies` | Other registry components installed first (transitive, depth-first)          |
+| `composer`     | Packages passed to `composer require` when missing                           |
+| `npm`          | Documented for the host project (not installed automatically)                |
+| `css`          | CSS files copied from the registry and imported into the main CSS file       |
+| `js`           | JS files copied under `resources/js/` and wired into `bladcn.js` when needed |
+
+Same-group sub-components (e.g. `accordion/trigger.blade.php`) are **not** listed in `dependencies`; only external registry components are.
+
+### Install flow (`bladcn add`)
+
+```mermaid
+flowchart TD
+    A["bladcn add carousel"] --> B["Registry: local path or GitHub cache"]
+    B --> C["Read carousel/dependencies.json"]
+    C --> D["DFS plan: icon → button → carousel"]
+    D --> E["Copy Blade files to componentsPath"]
+    D --> F["composer require listed packages"]
+    D --> G["Publish CSS/JS assets from manifest"]
+    E --> H["Update resolved in bladcn.json"]
+    F --> H
+    G --> H
 ```
 
 When you run `bladcn add accordion`, the CLI:
 
-1. Reads `accordion/dependencies.json`
-2. Installs internal dependencies first (`icon`)
-3. Runs `composer require` for packages listed in `composer` (if missing)
-4. Copies the component folder to `componentsPath`
-5. Does not copy `dependencies.json` to the target project
-6. Updates `resolved` in `bladcn.json`
+1. Validates the component exists in the registry
+2. Builds an ordered install plan via `ComponentInstaller::resolveInstallPlan()` (dependencies first)
+3. Copies each component folder/file to `componentsPath` (skips `dependencies.json`)
+4. Runs `composer require` for aggregated `composer` entries (`--no-external-deps` skips this)
+5. Publishes `css` / `js` assets and updates imports in `app.css` / `bladcn.js`
+6. Merges newly installed names into `resolved` in `bladcn.json`
 
-Same-group dependencies (internal sub-components) are not listed in `dependencies.json`; only external components are.
+Use `--no-deps` to install only the requested component without transitive registry dependencies.
+
+### Remove flow (`bladcn remove`)
+
+`ComponentRemover` uses `resolved` plus `DependencyResolver` to detect **orphans**: internal components, Composer packages, and CSS/JS assets that no remaining installed component still needs. Orphan removal can be skipped with `--no-orphans`.
 
 ## Laravel project requirements
 
 Copied components require the following in the host app (this CLI does not install them):
 
-| Dependency | Purpose |
-|---|---|
-| `livewire/blaze` | `@blaze` directive |
-| `mallardduck/blade-lucide-icons` | `<x-ui.icon>` |
-| `app/Bladcn/Support/*` | `ClassResolver`, toast, as-child |
-| `resources/css/app.css` | Tailwind 4 + shadcn tokens |
-| `resources/js/bladcn.js` | Alpine helpers (`bladcnOnAlpine`, scroll-area, copy button) |
-| `resources/js/bladcn/carousel.js` | Embla carousel registration |
-| `resources/views/partials/bladcn-boot.blade.php` | Layout hook before `@stack('bladcn-scripts')` |
-| `app/Providers/BladcnServiceProvider.php` | `@asChild` directive |
+| Dependency                                       | Purpose                                                     |
+| ------------------------------------------------ | ----------------------------------------------------------- |
+| `livewire/blaze`                                 | `@blaze` directive                                          |
+| `mallardduck/blade-lucide-icons`                 | `<x-ui.icon>`                                               |
+| `app/Bladcn/Support/*`                           | `ClassResolver`, toast, as-child                            |
+| `resources/css/app.css`                          | Tailwind 4 + shadcn tokens                                  |
+| `resources/js/bladcn.js`                         | Alpine helpers (`bladcnOnAlpine`, scroll-area, copy button) |
+| `resources/js/bladcn/carousel.js`                | Embla carousel registration                                 |
+| `resources/views/partials/bladcn-boot.blade.php` | Layout hook before `@stack('bladcn-scripts')`               |
+| `app/Providers/BladcnServiceProvider.php`        | `@asChild` directive                                        |
 
 ## Commands
 
-| Artisan | Binary | Description |
-|---|---|---|
-| `bladcn:init` | `bladcn init` | Create `bladcn.json` and publish base stubs |
-| `bladcn:list` | `bladcn list` | List registry components |
-| `bladcn:add` | `bladcn add` | Install components and dependencies |
-| `bladcn:remove` | `bladcn remove` | Remove components and orphan deps |
+| Artisan         | Binary          | Description                                 |
+| --------------- | --------------- | ------------------------------------------- |
+| `bladcn:init`   | `bladcn init`   | Create `bladcn.json` and publish base stubs |
+| `bladcn:list`   | `bladcn list`   | List registry components                    |
+| `bladcn:add`    | `bladcn add`    | Install components and dependencies         |
+| `bladcn:remove` | `bladcn remove` | Remove components and orphan deps           |
 
 ### `add` options
 
-| Option | Description |
-|---|---|
-| `--all` | Install every component from the registry |
-| `--no-deps` | Skip internal dependencies |
-| `--no-external-deps` | Skip automatic `composer require` |
-| `--overwrite` | Overwrite existing components |
-| `--dry-run` | Preview without copying |
+| Option               | Description                               |
+| -------------------- | ----------------------------------------- |
+| `--all`              | Install every component from the registry |
+| `--no-deps`          | Skip internal dependencies                |
+| `--no-external-deps` | Skip automatic `composer require`         |
+| `--overwrite`        | Overwrite existing components             |
+| `--dry-run`          | Preview without copying                   |
 
 ### `remove` options
 
-| Option | Description |
-|---|---|
+| Option         | Description                                |
+| -------------- | ------------------------------------------ |
 | `--no-orphans` | Do not remove orphan internal dependencies |
-| `--yes` | Remove orphans without prompting |
-| `--dry-run` | Preview without deleting |
+| `--yes`        | Remove orphans without prompting           |
+| `--dry-run`    | Preview without deleting                   |
 
 ### `init` options
 
-| Option | Description |
-|---|---|
-| `--with-dark-mode` | CSS theme with `.dark` variables |
-| `--css-file=app.css` | Main CSS file to import the theme into |
-| `--theme-file=bladcn-theme.css` | Theme file name |
-| `--skip-prompts` | Skip interactive prompts |
-| `--skip-assets` | Only `bladcn.json`, no stubs |
-| `--force` | Overwrite existing files |
+| Option                          | Description                            |
+| ------------------------------- | -------------------------------------- |
+| `--with-dark-mode`              | CSS theme with `.dark` variables       |
+| `--css-file=app.css`            | Main CSS file to import the theme into |
+| `--theme-file=bladcn-theme.css` | Theme file name                        |
+| `--skip-prompts`                | Skip interactive prompts               |
+| `--skip-assets`                 | Only `bladcn.json`, no stubs           |
+| `--force`                       | Overwrite existing files               |
 
 ## Code quality
 
 Aligned with [laravel-starter-kit](https://github.com/nunomaduro/laravel-starter-kit): Laravel Pint (strict preset), Larastan (max level + bleedingEdge), Rector with `rector-laravel`.
+
+See [AGENTS.md](AGENTS.md) for architecture notes and agent conventions.
 
 ```bash
 composer lint         # rector + pint (apply changes)
