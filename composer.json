@@ -1,14 +1,28 @@
 {
     "name": "ailuracode/bladcn",
-    "version": "1.0.0",
     "description": "CLI to add shadcn-style Blade components to Laravel projects",
     "type": "library",
     "license": "MIT",
+    "keywords": [
+        "laravel",
+        "blade",
+        "shadcn",
+        "ui",
+        "cli",
+        "alpine",
+        "components"
+    ],
+    "homepage": "https://github.com/ailuracode/bladcn-cli",
     "authors": [
         {
-            "name": "AiluraCode"
+            "name": "AiluraCode",
+            "homepage": "https://github.com/ailuracode"
         }
     ],
+    "support": {
+        "issues": "https://github.com/ailuracode/bladcn-cli/issues",
+        "source": "https://github.com/ailuracode/bladcn-cli"
+    },
     "require": {
         "php": "^8.2",
         "illuminate/console": "^11.0|^12.0|^13.0",
@@ -64,6 +78,9 @@
         "pint:check": "pint --parallel --test"
     },
     "extra": {
+        "branch-alias": {
+            "dev-main": "1.0-dev"
+        },
         "laravel": {
             "providers": [
                 "AiluraCode\\Bladcn\\Laravel\\BladcnCliServiceProvider"

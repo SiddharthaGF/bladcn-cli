@@ -272,4 +272,4 @@ composer rector:check # suggested refactorings (dry-run)
 
 ## License
 
-MIT
+MIT. See [LICENSE](LICENSE).

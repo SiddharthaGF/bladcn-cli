@@ -1,0 +1,10 @@
+* text=auto eol=lf
+
+/.github export-ignore
+/.env.example export-ignore
+/phpstan-bootstrap.php export-ignore
+/phpstan.neon.dist export-ignore
+/phpunit.xml.dist export-ignore
+/pint.json export-ignore
+/rector.php export-ignore
+/tests export-ignore

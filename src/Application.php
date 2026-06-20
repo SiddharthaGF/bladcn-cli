@@ -9,6 +9,7 @@ use AiluraCode\Bladcn\Commands\InitCommand;
 use AiluraCode\Bladcn\Commands\ListCommand;
 use AiluraCode\Bladcn\Commands\RemoveCommand;
 use AiluraCode\Bladcn\Support\EnvFile;
+use Composer\InstalledVersions;
 use Symfony\Component\Console\Application as SymfonyApplication;
 use Symfony\Component\Console\Input\ArgvInput;
 
@@ -35,21 +36,15 @@ final class Application
 
     private static function version(): string
     {
-        $path = dirname(__DIR__).'/composer.json';
+        if (class_exists(InstalledVersions::class)) {
+            $version = InstalledVersions::getPrettyVersion('ailuracode/bladcn');
 
-        if (! is_file($path)) {
-            return 'dev';
+            if (is_string($version)) {
+                return $version;
+            }
         }
 
-        $data = json_decode((string) file_get_contents($path), true);
-
-        if (! is_array($data)) {
-            return 'dev';
-        }
-
-        $version = $data['version'] ?? null;
-
-        return is_string($version) ? $version : 'dev';
+        return 'dev';
     }
 
     private static function loadEnvironmentFiles(): void
