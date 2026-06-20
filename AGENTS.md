@@ -4,7 +4,7 @@ Guide for AI agents working on **bladcn-cli** (`ailuracode/bladcn`).
 
 ## What this repository is
 
-CLI package to install [shadcn/ui](https://ui.shadcn.com)-style **Blade + Alpine** components into Laravel projects. It copies files from an external **component registry** (default: [bladcn-components](https://github.com/AiluraCode/bladcn-components)) and resolves transitive dependencies from each `dependencies.json`.
+CLI package to install [shadcn/ui](https://ui.shadcn.com)-style **Blade + Alpine** components into Laravel projects. It copies files from an external **component registry** (default: [bladcn-components](https://github.com/ailuracode/bladcn-components)) and resolves transitive dependencies from each `dependencies.json`.
 
 - **This repo:** installer, registry client, Laravel Artisan commands, init stubs publisher
 - **Not this repo:** Blade components, CSS tokens, or JS helpers (those live in **bladcn-components**)
@@ -136,8 +136,8 @@ PHP conventions: `declare(strict_types=1);`, prefer `final readonly class` where
 
 | Repo | Role |
 |---|---|
-| [AiluraCode/bladcn-components](https://github.com/AiluraCode/bladcn-components) | Component registry (Blade, CSS, JS, stubs) |
-| [AiluraCode/bladcn-cli](https://github.com/AiluraCode/bladcn-cli) | This package (`ailuracode/bladcn` on Packagist) |
+| [ailuracode/bladcn-components](https://github.com/ailuracode/bladcn-components) | Component registry (Blade, CSS, JS, stubs) |
+| [ailuracode/bladcn-cli](https://github.com/ailuracode/bladcn-cli) | This package (`ailuracode/bladcn` on Packagist) |
 
 ## License
 

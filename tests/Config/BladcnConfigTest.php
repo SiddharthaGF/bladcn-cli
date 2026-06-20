@@ -51,11 +51,11 @@ final class BladcnConfigTest extends BladcnTestCase
     public function test_from_array_with_github_registry(): void
     {
         $config = BladcnConfig::fromArray([
-            'registry' => 'github:SiddharthaGF/Bladcn-demo',
+            'registry' => 'github:ailuracode/bladcn-components',
             'resolved' => [],
         ], $this->tempDir());
 
-        $this->assertSame('SiddharthaGF/Bladcn-demo', $config->registryRepo);
+        $this->assertSame('ailuracode/bladcn-components', $config->registryRepo);
         $this->assertNull($config->registryPath);
         $this->assertSame('main', $config->registryBranch);
     }
@@ -63,11 +63,11 @@ final class BladcnConfigTest extends BladcnTestCase
     public function test_from_array_with_github_url(): void
     {
         $config = BladcnConfig::fromArray([
-            'registry' => 'https://github.com/SiddharthaGF/Bladcn-demo',
+            'registry' => 'https://github.com/ailuracode/bladcn-components',
             'resolved' => [],
         ], $this->tempDir());
 
-        $this->assertSame('SiddharthaGF/Bladcn-demo', $config->registryRepo);
+        $this->assertSame('ailuracode/bladcn-components', $config->registryRepo);
     }
 
     public function test_from_array_extracts_branch_from_github_tree_url(): void

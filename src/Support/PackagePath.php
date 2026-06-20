@@ -10,7 +10,7 @@ final class PackagePath
 {
     public const DEMO_REGISTRY_DIR = 'bladcn-components';
 
-    public const DEFAULT_GITHUB_REGISTRY = 'AiluraCode/bladcn-components';
+    public const DEFAULT_GITHUB_REGISTRY = 'ailuracode/bladcn-components';
 
     public static function root(): string
     {

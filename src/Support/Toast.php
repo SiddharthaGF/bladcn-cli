@@ -7,6 +7,7 @@ namespace AiluraCode\Bladcn\Support;
 use Illuminate\Support\Facades\Session;
 
 use function is_array;
+use function is_int;
 
 final class Toast
 {
@@ -40,10 +41,10 @@ final class Toast
         return array_filter([
             'title' => $title,
             'variant' => is_string($variant) ? $variant : 'default',
-            'description' => isset($options['description']) && is_string($options['description'])
+            'description' => isset($options['description']) && \is_string($options['description'])
                 ? $options['description']
                 : null,
-            'position' => isset($options['position']) && is_string($options['position'])
+            'position' => isset($options['position']) && \is_string($options['position'])
                 ? $options['position']
                 : null,
             'duration' => isset($options['duration']) && is_int($options['duration'])

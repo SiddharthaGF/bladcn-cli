@@ -2,7 +2,7 @@
 
 [shadcn/ui](https://ui.shadcn.com)-style CLI to install Blade + Alpine components in Laravel projects.
 
-Copies components from [bladcn-components](https://github.com/AiluraCode/bladcn-components) (CSS, JS, Blade) and resolves dependencies from each `dependencies.json`.
+Copies components from [bladcn-components](https://github.com/ailuracode/bladcn-components) (CSS, JS, Blade) and resolves dependencies from each `dependencies.json`.
 
 ### Registry layout (`bladcn-components`)
 
@@ -100,17 +100,17 @@ bladcn add button --overwrite
 {
   "$schema": "./vendor/ailuracode/bladcn/resources/bladcn.schema.json",
   "componentsPath": "resources/views/components/ui",
-  "registry": "github:SiddharthaGF/Bladcn-demo",
+  "registry": "github:ailuracode/bladcn-components",
   "registryBranch": "main",
   "resolved": ["accordion", "icon"]
 }
 ```
 
-The default registry points to [Bladcn-demo](https://github.com/SiddharthaGF/Bladcn-demo). You can change it using any of these formats:
+The default registry points to [bladcn-components](https://github.com/ailuracode/bladcn-components). You can change it using any of these formats:
 
 ```json
 {
-  "registry": "https://github.com/SiddharthaGF/Bladcn-demo"
+  "registry": "https://github.com/ailuracode/bladcn-components"
 }
 ```
 

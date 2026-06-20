@@ -15,7 +15,7 @@ final readonly class BladcnConfig
 {
     public const DEFAULT_REGISTRY = '../bladcn-components';
 
-    public const DEFAULT_REGISTRY_URL = 'https://github.com/AiluraCode/bladcn-components';
+    public const DEFAULT_REGISTRY_URL = 'https://github.com/ailuracode/bladcn-components';
 
     public const REGISTRY_ENV = 'BLADCN_REGISTRY';
 
