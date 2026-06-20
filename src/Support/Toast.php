@@ -6,11 +6,28 @@ namespace AiluraCode\Bladcn\Support;
 
 use Illuminate\Support\Facades\Session;
 
+use function is_array;
+
 final class Toast
 {
     public const string SESSION_KEY = 'bladcn_toast';
 
     public const string LIVEWIRE_EVENT = 'toast';
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    public static function fromSession(): ?array
+    {
+        $toast = Session::get(self::SESSION_KEY);
+
+        if (! is_array($toast)) {
+            return null;
+        }
+
+        /** @var array<string, mixed> $toast */
+        return $toast;
+    }
 
     /**
      * @param  array<string, mixed>  $options
