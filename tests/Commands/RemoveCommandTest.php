@@ -15,8 +15,7 @@ final class RemoveCommandTest extends BladcnTestCase
     public function test_remove_component_with_orphans(): void
     {
         $this->chdirToTemp();
-        $this->writeBladcnJson(['resolved' => ['icon', 'accordion', 'button']]);
-        $this->seedComponent('button');
+        $this->writeBladcnJson(['resolved' => ['icon', 'accordion']]);
         $this->seedComponent('icon');
         $this->seedComponent('accordion');
 
@@ -31,7 +30,7 @@ final class RemoveCommandTest extends BladcnTestCase
         $this->assertStringContainsString('- icon', $tester->getDisplay());
 
         $config = BladcnConfig::load($this->tempDir());
-        $this->assertSame(['button'], $config->resolved);
+        $this->assertSame([], $config->resolved);
     }
 
     private function seedComponent(string $name): void

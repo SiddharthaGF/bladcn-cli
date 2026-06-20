@@ -60,6 +60,50 @@ final readonly class DependencyResolver
      * @param  list<string>  $componentNames
      * @return list<string>
      */
+    public function collectCssAssets(array $componentNames): array
+    {
+        return $this->collectManifestAssets($componentNames, fn (ComponentManifest $manifest): array => $manifest->css);
+    }
+
+    /**
+     * @param  list<string>  $componentNames
+     * @return list<string>
+     */
+    public function collectJsAssets(array $componentNames): array
+    {
+        return $this->collectManifestAssets($componentNames, fn (ComponentManifest $manifest): array => $manifest->js);
+    }
+
+    /**
+     * @param  list<string>  $removedComponents
+     * @param  list<string>  $stillInstalled
+     * @return list<string>
+     */
+    public function findOrphanCssAssets(array $removedComponents, array $stillInstalled): array
+    {
+        return array_values(array_diff(
+            $this->collectCssAssets($removedComponents),
+            $this->collectCssAssets($stillInstalled),
+        ));
+    }
+
+    /**
+     * @param  list<string>  $removedComponents
+     * @param  list<string>  $stillInstalled
+     * @return list<string>
+     */
+    public function findOrphanJsAssets(array $removedComponents, array $stillInstalled): array
+    {
+        return array_values(array_diff(
+            $this->collectJsAssets($removedComponents),
+            $this->collectJsAssets($stillInstalled),
+        ));
+    }
+
+    /**
+     * @param  list<string>  $componentNames
+     * @return list<string>
+     */
     public function collectComposerDependencies(array $componentNames): array
     {
         $packages = [];
@@ -113,5 +157,25 @@ final readonly class DependencyResolver
         }
 
         return false;
+    }
+
+    /**
+     * @param  list<string>  $componentNames
+     * @param  callable(ComponentManifest): list<string>  $extract
+     * @return list<string>
+     */
+    private function collectManifestAssets(array $componentNames, callable $extract): array
+    {
+        $assets = [];
+
+        foreach ($componentNames as $name) {
+            foreach ($extract($this->registry->manifest($name)) as $asset) {
+                $assets[] = $asset;
+            }
+        }
+
+        sort($assets);
+
+        return array_values(array_unique($assets));
     }
 }

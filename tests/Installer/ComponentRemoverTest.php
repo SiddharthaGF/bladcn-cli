@@ -14,9 +14,9 @@ final class ComponentRemoverTest extends BladcnTestCase
 {
     public function test_remove_component_and_orphan_dependency(): void
     {
-        $this->seedInstalledComponents(['icon', 'accordion', 'button']);
+        $this->seedInstalledComponents(['icon', 'accordion']);
 
-        $remover = $this->remover(['icon', 'accordion', 'button']);
+        $remover = $this->remover(['icon', 'accordion']);
         $plan = $remover->planRemoval(['accordion']);
 
         $this->assertEqualsCanonicalizing(['accordion', 'icon'], $plan['removed']);
@@ -27,10 +27,9 @@ final class ComponentRemoverTest extends BladcnTestCase
         $this->assertEqualsCanonicalizing(['accordion', 'icon'], $result['removed']);
         $this->assertFileDoesNotExist($this->componentPath('accordion/accordion.blade.php'));
         $this->assertFileDoesNotExist($this->componentPath('icon/icon.blade.php'));
-        $this->assertFileExists($this->componentPath('button.blade.php'));
 
         $config = BladcnConfig::load($this->tempDir());
-        $this->assertSame(['button'], $config->resolved);
+        $this->assertSame([], $config->resolved);
     }
 
     public function test_remove_keeps_shared_dependency(): void

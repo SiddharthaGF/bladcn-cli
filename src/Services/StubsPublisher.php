@@ -42,20 +42,6 @@ final readonly class StubsPublisher
         $written = [...$written, ...$this->publishStub(
             $stubsRoot,
             $projectRoot,
-            'resources/js/bladcn/carousel.js',
-            $options->force,
-        )];
-
-        $written = [...$written, ...$this->publishStub(
-            $stubsRoot,
-            $projectRoot,
-            'resources/css/sonner.css',
-            $options->force,
-        )];
-
-        $written = [...$written, ...$this->publishStub(
-            $stubsRoot,
-            $projectRoot,
             'resources/css/bladcn-base.css',
             $options->force,
         )];
@@ -163,7 +149,6 @@ final readonly class StubsPublisher
         }
 
         $imports = [
-            './sonner.css',
             './bladcn-base.css',
             './'.$options->themeFile,
         ];

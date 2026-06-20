@@ -93,10 +93,10 @@ final class AddCommandTest extends BladcnTestCase
         ]);
 
         $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('Installing 3 components', $tester->getDisplay());
+        $this->assertStringContainsString('Installing 5 components', $tester->getDisplay());
 
         $config = BladcnConfig::load($this->tempDir());
-        $this->assertEqualsCanonicalizing(['accordion', 'button', 'icon'], $config->resolved);
+        $this->assertEqualsCanonicalizing(['accordion', 'button', 'carousel', 'icon', 'sonner'], $config->resolved);
     }
 
     public function test_add_all_conflicts_with_component_names(): void

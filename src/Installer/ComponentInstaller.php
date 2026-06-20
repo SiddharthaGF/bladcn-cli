@@ -18,14 +18,18 @@ final class ComponentInstaller
 
     private readonly ExternalDependencyManager $externalDependencyManager;
 
+    private readonly ComponentAssetManager $assetManager;
+
     public function __construct(
         private BladcnConfig $config,
         private readonly Registry $registry,
         ?DependencyResolver $dependencyResolver = null,
         ?ExternalDependencyManager $externalDependencyManager = null,
+        ?ComponentAssetManager $assetManager = null,
     ) {
         $this->dependencyResolver = $dependencyResolver ?? new DependencyResolver($registry);
         $this->externalDependencyManager = $externalDependencyManager ?? new ExternalDependencyManager;
+        $this->assetManager = $assetManager ?? new ComponentAssetManager($config, $registry, $this->dependencyResolver);
     }
 
     /**
@@ -42,7 +46,7 @@ final class ComponentInstaller
     }
 
     /**
-     * @return array{components: list<string>, composer: list<string>}
+     * @return array{components: list<string>, composer: list<string>, assets: list<string>}
      */
     public function install(string $component, bool $overwrite = false, bool $withDependencies = true, bool $installExternal = true, bool $dryRun = false): array
     {
@@ -68,6 +72,7 @@ final class ComponentInstaller
         }
 
         $composerInstalled = [];
+        $assetsPublished = [];
 
         if ($installExternal && $installed !== []) {
             $composerPackages = $this->dependencyResolver->collectComposerDependencies($installed);
@@ -76,6 +81,10 @@ final class ComponentInstaller
                 $composerPackages,
                 $dryRun,
             );
+        }
+
+        if (! $dryRun && $plan !== []) {
+            $assetsPublished = $this->assetManager->publishForComponents($plan, $overwrite);
         }
 
         if (! $dryRun && $installed !== []) {
@@ -87,6 +96,7 @@ final class ComponentInstaller
         return [
             'components' => $installed,
             'composer' => $composerInstalled,
+            'assets' => $assetsPublished,
         ];
     }
 

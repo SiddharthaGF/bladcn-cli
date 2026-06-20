@@ -25,7 +25,7 @@ final class ListCommandTest extends BladcnTestCase
         $this->assertStringContainsString('accordion', $output);
         $this->assertStringContainsString('button', $output);
         $this->assertStringContainsString('icon', $output);
-        $this->assertStringContainsString('3 components', $output);
+        $this->assertStringContainsString('5 components', $output);
     }
 
     public function test_list_fails_without_config(): void

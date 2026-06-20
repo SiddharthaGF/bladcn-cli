@@ -32,15 +32,15 @@ final class InitServiceTest extends BladcnTestCase
         $this->assertFileExists($this->tempDir().'/resources/views/partials/bladcn-boot.blade.php');
         $this->assertFileExists($this->tempDir().'/resources/css/bladcn-theme.css');
         $this->assertFileExists($this->tempDir().'/resources/css/bladcn-base.css');
-        $this->assertFileExists($this->tempDir().'/resources/css/sonner.css');
+        $this->assertFileDoesNotExist($this->tempDir().'/resources/css/sonner.css');
         $this->assertFileExists($this->tempDir().'/resources/js/bladcn.js');
-        $this->assertFileExists($this->tempDir().'/resources/js/bladcn/carousel.js');
+        $this->assertFileDoesNotExist($this->tempDir().'/resources/js/bladcn/carousel.js');
 
         $providers = (string) file_get_contents($this->tempDir().'/bootstrap/providers.php');
         $this->assertStringContainsString('BladcnServiceProvider::class', $providers);
 
         $appCss = (string) file_get_contents($this->tempDir().'/resources/css/app.css');
-        $this->assertStringContainsString('@import "./sonner.css";', $appCss);
+        $this->assertStringNotContainsString('@import "./sonner.css";', $appCss);
         $this->assertStringContainsString('@import "./bladcn-base.css";', $appCss);
         $this->assertStringContainsString('@import "./bladcn-theme.css";', $appCss);
 
@@ -96,7 +96,7 @@ final class InitServiceTest extends BladcnTestCase
         $appCss = (string) file_get_contents($this->tempDir().'/resources/css/app.css');
         $this->assertStringContainsString('@import "tailwindcss";', $appCss);
         $this->assertStringContainsString("@source '../views';", $appCss);
-        $this->assertStringContainsString('@import "./sonner.css";', $appCss);
+        $this->assertStringNotContainsString('@import "./sonner.css";', $appCss);
         $this->assertStringContainsString('@import "./bladcn-base.css";', $appCss);
         $this->assertStringContainsString('@import "./bladcn-theme.css";', $appCss);
     }

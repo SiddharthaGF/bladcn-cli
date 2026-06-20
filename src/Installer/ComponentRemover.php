@@ -6,6 +6,7 @@ namespace AiluraCode\Bladcn\Installer;
 
 use AiluraCode\Bladcn\Config\BladcnConfig;
 use AiluraCode\Bladcn\Registry\DependencyResolver;
+use AiluraCode\Bladcn\Registry\Registry;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RuntimeException;
@@ -13,10 +14,17 @@ use SplFileInfo;
 
 final class ComponentRemover
 {
+    private readonly ComponentAssetManager $assetManager;
+
     public function __construct(
         private BladcnConfig $config,
         private readonly DependencyResolver $dependencyResolver,
-    ) {}
+        ?ComponentAssetManager $assetManager = null,
+        ?Registry $registry = null,
+    ) {
+        $registry ??= new Registry($config);
+        $this->assetManager = $assetManager ?? new ComponentAssetManager($config, $registry, $dependencyResolver);
+    }
 
     /**
      * @param  list<string>  $components
@@ -62,13 +70,16 @@ final class ComponentRemover
             }
         }
 
+        $stillInstalled = array_values(array_diff($this->config->resolved, $names));
+
         if ($removed !== []) {
             $resolved = array_values(array_diff($this->config->resolved, $removed));
             $this->config = $this->config->withResolved($resolved);
             $this->config->save();
+            $stillInstalled = $this->config->resolved;
         }
 
-        $stillInstalled = $this->config->resolved;
+        $this->assetManager->removeOrphans($names, $stillInstalled);
 
         return [
             'removed' => $removed,

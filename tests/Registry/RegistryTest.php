@@ -15,7 +15,7 @@ final class RegistryTest extends BladcnTestCase
     {
         $components = $this->registry()->listComponents();
 
-        $this->assertSame(['accordion', 'button', 'icon'], $components);
+        $this->assertSame(['accordion', 'button', 'carousel', 'icon', 'sonner'], $components);
     }
 
     public function test_has_component(): void

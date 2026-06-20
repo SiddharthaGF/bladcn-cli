@@ -116,7 +116,7 @@ final class AddCommand extends Command
                 return Command::FAILURE;
             }
 
-            if ($result['components'] === [] && $result['composer'] === []) {
+            if ($result['components'] === [] && $result['composer'] === [] && $result['assets'] === []) {
                 if (! $dryRun) {
                     $io->note('Nothing new to install (already present). Use --overwrite to replace.');
                 }
@@ -129,6 +129,11 @@ final class AddCommand extends Command
                 foreach ($result['composer'] as $package) {
                     $prefix = $dryRun ? '~' : '+';
                     $io->writeln(sprintf('  <info>%s</info> composer: %s', $prefix, $package));
+                }
+
+                foreach ($result['assets'] as $asset) {
+                    $prefix = $dryRun ? '~' : '+';
+                    $io->writeln(sprintf('  <info>%s</info> asset: %s', $prefix, $asset));
                 }
             }
 

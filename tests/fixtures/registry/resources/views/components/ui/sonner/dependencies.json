@@ -1,0 +1,4 @@
+{
+  "dependencies": ["icon"],
+  "css": ["sonner.css"]
+}
